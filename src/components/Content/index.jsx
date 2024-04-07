@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import './style.css'
 import memesData from '../../memeData'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Content() {
 	const [meme, setMeme] = useState({
@@ -10,11 +10,10 @@ export default function Content() {
 		randomImage: 'http://i.imgflip.com/1bij.jpg',
 	})
 
-	const [allMemeImages, setAllMemeImages] = useState(memesData)
+	const [allMemes, setAllMemes] = useState([])
 
 	function randomURL() {
-		const data = allMemeImages.data.memes
-		const memeUrl = data[Math.floor(Math.random() * data.length)].url
+		const memeUrl = allMemes[Math.floor(Math.random() * allMemes.length)].url
 
 		setMeme((prevState) => ({
 			...prevState,
@@ -30,6 +29,12 @@ export default function Content() {
 			[name]: value,
 		}))
 	}
+
+	useEffect(() => {
+		fetch('https://api.imgflip.com/get_memes')
+			.then((res) => res.json())
+			.then((data) => setAllMemes(data.data.memes))
+	}, [])
 
 	return (
 		<main className="container">
